@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migration Plan — Europe from Argentina</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1a1a2e;
+            background: #f8f9fa;
+            padding: 16px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+            color: #16213e;
+        }
+        h2 {
+            font-size: 1.3rem;
+            margin: 32px 0 12px;
+            color: #0f3460;
+            border-bottom: 2px solid #e94560;
+            padding-bottom: 6px;
+        }
+        h3 {
+            font-size: 1.1rem;
+            margin: 20px 0 8px;
+            color: #16213e;
+        }
+        .subtitle {
+            color: #555;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .card-highlight {
+            border-left: 4px solid #e94560;
+        }
+        .card-success {
+            border-left: 4px solid #2ecc71;
+        }
+        .card-info {
+            border-left: 4px solid #3498db;
+        }
+        .card-warning {
+            border-left: 4px solid #f39c12;
+        }
+        .family-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+        .family-member {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #f0f4ff;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        .family-member .name { font-weight: 600; }
+        .passport-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 4px;
+        }
+        .passport-eu { background: #d4edda; color: #155724; }
+        .passport-ve { background: #fff3cd; color: #856404; }
+        .key-insight {
+            background: #eaf4ff;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 12px 0;
+            font-size: 0.9rem;
+        }
+        .key-insight strong { color: #0f3460; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin: 12px 0;
+        }
+        th, td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: #f0f4ff;
+            font-weight: 600;
+            color: #0f3460;
+        }
+        tr:last-child td { border-bottom: none; }
+        .total-row { font-weight: 700; background: #f8f9fa; }
+        .stars { color: #f39c12; letter-spacing: 1px; }
+        .country-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .country-flag {
+            font-size: 1.4rem;
+        }
+        .country-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .tag-recommended { background: #d4edda; color: #155724; }
+        .tag-budget { background: #cce5ff; color: #004085; }
+        .tag-middle { background: #fff3cd; color: #856404; }
+        .pro-con { font-size: 0.85rem; margin: 4px 0; }
+        .pro::before { content: "✓ "; color: #2ecc71; font-weight: bold; }
+        .con::before { content: "✗ "; color: #e74c3c; font-weight: bold; }
+        .timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e94560;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 6px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #e94560;
+        }
+        .timeline-item .step-label {
+            font-weight: 700;
+            color: #0f3460;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+        .scenario-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .scenario-btn {
+            padding: 8px 16px;
+            border: 2px solid #0f3460;
+            border-radius: 8px;
+            background: #fff;
+            color: #0f3460;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .scenario-btn.active {
+            background: #0f3460;
+            color: #fff;
+        }
+        .scenario-content { display: none; }
+        .scenario-content.active { display: block; }
+        .comparison-table {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .risk-meter {
+            height: 8px;
+            border-radius: 4px;
+            background: #eee;
+            margin: 8px 0;
+        }
+        .risk-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+        .risk-low { width: 25%; background: #2ecc71; }
+        .risk-medium { width: 50%; background: #f39c12; }
+        .risk-high { width: 75%; background: #e74c3c; }
+        .summary-box {
+            background: linear-gradient(135deg, #0f3460, #16213e);
+            color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+        .summary-box h3 { color: #fff; margin-bottom: 12px; }
+        .summary-box p { font-size: 0.9rem; opacity: 0.9; margin-bottom: 8px; }
+        .amount-highlight {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #e94560;
+        }
+        .summary-box .amount-highlight {
+            color: #ff6b81;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 40px;
+            padding: 16px 0;
+        }
+        .currency-picker {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding: 12px 16px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .currency-picker label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #0f3460;
+            white-space: nowrap;
+        }
+        .currency-btn {
+            padding: 6px 14px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            background: #f8f9fa;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .currency-btn:hover { border-color: #0f3460; }
+        .currency-btn.active {
+            background: #0f3460;
+            color: #fff;
+            border-color: #0f3460;
+        }
+        .currency-note {
+            width: 100%;
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 4px;
+        }
+        @media (min-width: 600px) {
+            .family-grid { grid-template-columns: 1fr 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Migration Plan: Argentina → Europe</h1>
+    <p class="subtitle">Family relocation analysis — May 2026</p>
+
+    <!-- CURRENCY PICKER -->
+    <div class="currency-picker">
+        <label>Currency:</label>
+        <button class="currency-btn active" onclick="setCurrency('AUD')">A$ AUD</button>
+        <button class="currency-btn" onclick="setCurrency('EUR')">€ EUR</button>
+        <button class="currency-btn" onclick="setCurrency('USD')">US$ USD</button>
+        <button class="currency-btn" onclick="setCurrency('ARS')">AR$ ARS</button>
+        <div class="currency-note" id="currency-note">Approximate rates: 1 AUD ≈ 0.59 EUR ≈ 0.65 USD ≈ 800 ARS</div>
+    </div>
+
+    <!-- FAMILY OVERVIEW -->
+    <h2>Family Profile</h2>
+    <div class="card">
+        <div class="family-grid">
+            <div class="family-member">
+                <div>
+                    <div class="name">Sister (40)</div>
+                    <div>Industrial Engineer · Accenture (7yr)</div>
+                </div>
+                <div>
+                    <span class="passport-badge passport-eu">NL</span>
+                    <span class="passport-badge passport-ve">VE</span>
+                </div>
+            </div>
+            <div class="family-member">
+                <div>
+                    <div class="name">Husband (46)</div>
+                    <div>Remote admin · No tertiary education</div>
+                </div>
+                <div>
+                    <span class="passport-badge passport-ve">VE</span>
+                </div>
+            </div>
+            <div class="family-member">
+                <div>
+                    <div class="name">Daughter (5)</div>
+                    <div>Starting school age</div>
+                </div>
+                <div>
+                    <span class="passport-badge passport-eu">NL</span>
+                    <span class="passport-badge passport-ve">VE</span>
+                </div>
+            </div>
+        </div>
+        <div class="key-insight">
+            <strong>Languages:</strong> Spanish (native), English (fluent — adults), limited English (daughter)
+        </div>
+    </div>
+
+    <!-- LEGAL ADVANTAGE -->
+    <h2>Key Legal Advantage</h2>
+    <div class="card card-success">
+        <h3>EU Free Movement (Directive 2004/38/EC)</h3>
+        <p style="font-size:0.9rem; margin-top:8px;">Sister &amp; daughter hold <strong>Dutch (EU) passports</strong>. When an EU citizen moves to a <em>different</em> EU member state, their non-EU spouse gets automatic residence rights.</p>
+        <div class="key-insight">
+            <strong>What this means:</strong> Husband needs NO language exam, NO income proof, and NO visa sponsorship in any EU country <em>except</em> the Netherlands (which applies its own national law). This opens 26 EU countries.
+        </div>
+        <p style="font-size:0.85rem; color:#555;"><strong>Netherlands workaround:</strong> Move to Belgium first (3–6 months), then relocate to NL invoking EU law — bypasses the Dutch language exam entirely. Alternatively, A1 Dutch is basic and achievable in 3–4 months.</p>
+    </div>
+
+    <!-- COUNTRY COMPARISON -->
+    <h2>Country Comparison</h2>
+
+    <!-- Netherlands -->
+    <div class="card card-highlight">
+        <div class="country-header">
+            <span class="country-flag">🇳🇱</span>
+            <strong>Netherlands</strong>
+            <span class="country-tag tag-recommended">Recommended</span>
+        </div>
+        <p class="pro-con pro">Best combination: high salary + excellent schools</p>
+        <p class="pro-con pro">English widely used in workplaces</p>
+        <p class="pro-con pro">Expected salary: <span class="money" data-base="eur" data-low="55000" data-high="70000" data-suffix="/yr"></span></p>
+        <p class="pro-con pro">PISA school ranking: Top tier</p>
+        <p class="pro-con con">Housing market extremely tight</p>
+        <p class="pro-con con">High cost of living</p>
+        <p class="pro-con con">Husband needs A1 Dutch (or Belgium workaround)</p>
+    </div>
+
+    <!-- Estonia -->
+    <div class="card card-info">
+        <div class="country-header">
+            <span class="country-flag">🇪🇪</span>
+            <strong>Estonia</strong>
+            <span class="country-tag tag-budget">Best Value</span>
+        </div>
+        <p class="pro-con pro">#1 schools in Europe (PISA)</p>
+        <p class="pro-con pro">40–50% cheaper than Netherlands</p>
+        <p class="pro-con pro">Very high English proficiency</p>
+        <p class="pro-con pro">World-leading digital infrastructure</p>
+        <p class="pro-con pro">Expected salary: <span class="money" data-base="eur" data-low="2500" data-high="3500" data-suffix="/month"></span></p>
+        <p class="pro-con con">Cold climate</p>
+        <p class="pro-con con">Smaller job market</p>
+        <p class="pro-con con">Lower absolute salary = slower repayment</p>
+    </div>
+
+    <!-- Ireland -->
+    <div class="card">
+        <div class="country-header">
+            <span class="country-flag">🇮🇪</span>
+            <strong>Ireland</strong>
+        </div>
+        <p class="pro-con pro">English-speaking country</p>
+        <p class="pro-con pro">Accenture has major operations there</p>
+        <p class="pro-con pro">Expected salary: <span class="money" data-base="eur" data-low="55000" data-high="75000" data-suffix="/yr"></span></p>
+        <p class="pro-con pro">Good public schools</p>
+        <p class="pro-con con">Severe housing crisis in Dublin</p>
+        <p class="pro-con con">Very high rent</p>
+    </div>
+
+    <!-- Germany -->
+    <div class="card">
+        <div class="country-header">
+            <span class="country-flag">🇩🇪</span>
+            <strong>Germany</strong>
+        </div>
+        <p class="pro-con pro">Excellent schools (Bavaria/Baden-Württemberg)</p>
+        <p class="pro-con pro">Strong industrial economy for her profile</p>
+        <p class="pro-con pro">20–30% cheaper than NL</p>
+        <p class="pro-con pro">Expected salary: <span class="money" data-base="eur" data-low="50000" data-high="65000" data-suffix="/yr"></span></p>
+        <p class="pro-con con">German language needed medium-term</p>
+        <p class="pro-con con">Less English in workplaces outside major cities</p>
+    </div>
+
+    <!-- Lithuania -->
+    <div class="card">
+        <div class="country-header">
+            <span class="country-flag">🇱🇹</span>
+            <strong>Lithuania</strong>
+        </div>
+        <p class="pro-con pro">Very low cost of living</p>
+        <p class="pro-con pro">Above-average EU schools</p>
+        <p class="pro-con pro">Good English among younger population</p>
+        <p class="pro-con con">Weaker job market for her profile</p>
+        <p class="pro-con con">Lower salaries (<span class="money" data-base="eur" data-low="2000" data-high="3000" data-suffix="/month"></span>)</p>
+    </div>
+
+    <!-- FINANCIALS -->
+    <h2>Financial Estimates (<span id="fin-currency-label">AUD</span>)</h2>
+    <p style="font-size:0.85rem; color:#555; margin-bottom:12px;" id="rate-note">Rate used: 1 EUR ≈ 1.70 AUD</p>
+
+    <div class="scenario-toggle">
+        <button class="scenario-btn active" onclick="showScenario('with-job')">With Job Secured</button>
+        <button class="scenario-btn" onclick="showScenario('without-job')">Without Job</button>
+    </div>
+
+    <!-- With Job -->
+    <div id="scenario-with-job" class="scenario-content active">
+        <div class="card">
+            <h3>Netherlands — Job Secured Before Move</h3>
+            <div class="risk-meter"><div class="risk-fill risk-low"></div></div>
+            <span style="font-size:0.75rem; color:#2ecc71;">Lower risk</span>
+            <table>
+                <tr><th>Cost Item</th><th class="col-amount">AUD</th></tr>
+                <tr><td>Flights (3 people)</td><td><span class="money" data-base="aud" data-low="4000" data-high="5000"></span></td></tr>
+                <tr><td>Rental deposit + agent fee</td><td><span class="money" data-base="aud" data-low="7500" data-high="10000"></span></td></tr>
+                <tr><td>Basic furniture/setup</td><td><span class="money" data-base="aud" data-low="4000" data-high="5500"></span></td></tr>
+                <tr><td>Living costs (first 2 months)</td><td><span class="money" data-base="aud" data-low="13000" data-high="17000"></span></td></tr>
+                <tr><td>Registration, permits, insurance</td><td><span class="money" data-base="aud" data-low="1500" data-high="2500"></span></td></tr>
+                <tr><td>Emergency buffer</td><td><span class="money" data-base="aud" data-low="3000" data-high="5000"></span></td></tr>
+                <tr class="total-row"><td><strong>Total</strong></td><td><strong><span class="money" data-base="aud" data-low="33000" data-high="45000"></span></strong></td></tr>
+            </table>
+            <div class="key-insight">
+                <strong>Repayment:</strong> ~<span class="money" data-base="aud" data-low="2000"></span>/month surplus → <strong>18–24 months</strong> to repay at 6% interest
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Estonia — Job Secured Before Move</h3>
+            <div class="risk-meter"><div class="risk-fill risk-low"></div></div>
+            <span style="font-size:0.75rem; color:#2ecc71;">Lower risk</span>
+            <table>
+                <tr><th>Cost Item</th><th class="col-amount">AUD</th></tr>
+                <tr><td>Flights (3 people)</td><td><span class="money" data-base="aud" data-low="4000" data-high="4500"></span></td></tr>
+                <tr><td>Rental deposit</td><td><span class="money" data-base="aud" data-low="2500" data-high="3500"></span></td></tr>
+                <tr><td>Basic furniture/setup</td><td><span class="money" data-base="aud" data-low="3000" data-high="4000"></span></td></tr>
+                <tr><td>Living costs (first 2 months)</td><td><span class="money" data-base="aud" data-low="6000" data-high="8000"></span></td></tr>
+                <tr><td>Registration, insurance</td><td><span class="money" data-base="aud" data-low="1000" data-high="1500"></span></td></tr>
+                <tr><td>Emergency buffer</td><td><span class="money" data-base="aud" data-low="2500" data-high="3500"></span></td></tr>
+                <tr class="total-row"><td><strong>Total</strong></td><td><strong><span class="money" data-base="aud" data-low="19000" data-high="25000"></span></strong></td></tr>
+            </table>
+            <div class="key-insight">
+                <strong>Repayment:</strong> ~<span class="money" data-base="aud" data-low="1000"></span>/month surplus → <strong>22–28 months</strong> to repay at 6% interest
+            </div>
+        </div>
+    </div>
+
+    <!-- Without Job -->
+    <div id="scenario-without-job" class="scenario-content">
+        <div class="card card-warning">
+            <h3>Netherlands — No Job Secured</h3>
+            <div class="risk-meter"><div class="risk-fill risk-high"></div></div>
+            <span style="font-size:0.75rem; color:#e74c3c;">Higher risk</span>
+            <p style="font-size:0.85rem; margin:8px 0; color:#856404;"><strong>Key problem:</strong> Landlords require employment contract showing income ≥ 3× rent. Without a job, must use expensive short-term housing or pay 6–12 months upfront.</p>
+            <table>
+                <tr><th>Cost Item</th><th class="col-amount">AUD</th></tr>
+                <tr><td>Flights (3 people)</td><td><span class="money" data-base="aud" data-low="4500"></span></td></tr>
+                <tr><td>Short-term rental (3 months search)</td><td><span class="money" data-base="aud" data-low="15000" data-high="18000"></span></td></tr>
+                <tr><td>Living expenses (3 months search)</td><td><span class="money" data-base="aud" data-low="20000" data-high="25000"></span></td></tr>
+                <tr><td>Permanent rental deposit + setup</td><td><span class="money" data-base="aud" data-low="10000" data-high="12000"></span></td></tr>
+                <tr><td>First month before salary</td><td><span class="money" data-base="aud" data-low="6000" data-high="7000"></span></td></tr>
+                <tr><td>Buffer</td><td><span class="money" data-base="aud" data-low="5000"></span></td></tr>
+                <tr class="total-row"><td><strong>Total</strong></td><td><strong><span class="money" data-base="aud" data-low="60000" data-high="72000"></span></strong></td></tr>
+            </table>
+            <div class="key-insight">
+                <strong>Repayment:</strong> ~<span class="money" data-base="aud" data-low="2000"></span>/month surplus → <strong>3–4 years</strong> to repay at 6% interest
+            </div>
+        </div>
+
+        <div class="card card-info">
+            <h3>Estonia — No Job Secured</h3>
+            <div class="risk-meter"><div class="risk-fill risk-medium"></div></div>
+            <span style="font-size:0.75rem; color:#f39c12;">Moderate risk</span>
+            <p style="font-size:0.85rem; margin:8px 0; color:#555;">Housing market much more accessible without a job. Landlords more flexible, costs significantly lower.</p>
+            <table>
+                <tr><th>Cost Item</th><th class="col-amount">AUD</th></tr>
+                <tr><td>Flights (3 people)</td><td><span class="money" data-base="aud" data-low="4500"></span></td></tr>
+                <tr><td>Short-term rental (3 months search)</td><td><span class="money" data-base="aud" data-low="6000" data-high="8000"></span></td></tr>
+                <tr><td>Living expenses (3 months search)</td><td><span class="money" data-base="aud" data-low="10000" data-high="12000"></span></td></tr>
+                <tr><td>Permanent rental deposit + setup</td><td><span class="money" data-base="aud" data-low="4000" data-high="5000"></span></td></tr>
+                <tr><td>Buffer</td><td><span class="money" data-base="aud" data-low="3000"></span></td></tr>
+                <tr class="total-row"><td><strong>Total</strong></td><td><strong><span class="money" data-base="aud" data-low="27000" data-high="33000"></span></strong></td></tr>
+            </table>
+            <div class="key-insight">
+                <strong>Repayment:</strong> ~<span class="money" data-base="aud" data-low="1000"></span>/month surplus → <strong>2.5–4 years</strong> to repay at 6% interest
+            </div>
+        </div>
+    </div>
+
+    <!-- OVERALL COMPARISON -->
+    <h2>Full Comparison</h2>
+    <div class="card comparison-table">
+        <table>
+            <tr>
+                <th>Country</th>
+                <th>Loan (no job)</th>
+                <th>Schools</th>
+                <th>Repay</th>
+            </tr>
+            <tr>
+                <td>🇳🇱 Netherlands</td>
+                <td><span class="money" data-base="aud" data-low="60000" data-high="72000" data-format="k"></span></td>
+                <td class="stars">★★★★★</td>
+                <td>3–4 yr</td>
+            </tr>
+            <tr>
+                <td>🇮🇪 Ireland</td>
+                <td><span class="money" data-base="aud" data-low="55000" data-high="65000" data-format="k"></span></td>
+                <td class="stars">★★★★</td>
+                <td>3–4 yr</td>
+            </tr>
+            <tr>
+                <td>🇩🇪 Germany</td>
+                <td><span class="money" data-base="aud" data-low="45000" data-high="55000" data-format="k"></span></td>
+                <td class="stars">★★★★★</td>
+                <td>2.5–3 yr</td>
+            </tr>
+            <tr>
+                <td>🇪🇪 Estonia</td>
+                <td><span class="money" data-base="aud" data-low="27000" data-high="33000" data-format="k"></span></td>
+                <td class="stars">★★★★★</td>
+                <td>2.5–4 yr</td>
+            </tr>
+            <tr>
+                <td>🇱🇹 Lithuania</td>
+                <td><span class="money" data-base="aud" data-low="22000" data-high="28000" data-format="k"></span></td>
+                <td class="stars">★★★★</td>
+                <td>3–5 yr</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- STRATEGIES -->
+    <h2>Recommended Strategies</h2>
+
+    <div class="card card-success">
+        <h3>Strategy A: Netherlands with Job First (Lowest Risk)</h3>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="step-label">Month 1–3</div>
+                <p>Sister applies remotely for NL/IE jobs. Dutch passport = no sponsorship needed (huge advantage).</p>
+            </div>
+            <div class="timeline-item">
+                <div class="step-label">Meanwhile</div>
+                <p>Husband studies A1 Dutch (or plan Belgium-first route).</p>
+            </div>
+            <div class="timeline-item">
+                <div class="step-label">Job secured</div>
+                <p>Move within 4–6 weeks. First salary within first month.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="step-label">Month 6+</div>
+                <p>Begin loan repayment at ~<span class="money" data-base="aud" data-low="2000"></span>/month.</p>
+            </div>
+        </div>
+        <p style="font-size:0.85rem; margin-top:8px;"><strong>Total loan needed:</strong> <span class="amount-highlight">~<span class="money" data-base="aud" data-low="35000" data-high="40000"></span></span></p>
+    </div>
+
+    <div class="card card-info">
+        <h3>Strategy B: Estonia as Launch Pad (Best Value)</h3>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="step-label">Month 1</div>
+                <p>Move to Tallinn. Low-cost setup. Daughter enters top-ranked school system.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="step-label">Month 1–3</div>
+                <p>Sister finds work (finance/cost control roles). Husband continues remote work.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="step-label">Year 1–2</div>
+                <p>Build European work experience and references. Begin repayment.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="step-label">Year 2+ (optional)</div>
+                <p>Relocate within EU to NL/DE with local experience — far more competitive.</p>
+            </div>
+        </div>
+        <p style="font-size:0.85rem; margin-top:8px;"><strong>Total loan needed:</strong> <span class="amount-highlight">~<span class="money" data-base="aud" data-low="27000" data-high="33000"></span></span></p>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="summary-box">
+        <h3>Bottom Line</h3>
+        <p><strong>Safest bet:</strong> Netherlands with a job secured first. Loan ~<span class="money amount-highlight" data-base="aud" data-low="35000" data-high="40000" data-format="k"></span>, repaid in under 2 years.</p>
+        <p><strong>Best value:</strong> Estonia without a job. Loan ~<span class="money amount-highlight" data-base="aud" data-low="30000" data-format="k"></span>, best schools in Europe, repaid in 2.5–4 years.</p>
+        <p><strong>Highest risk:</strong> Netherlands without a job. Loan ~<span class="money amount-highlight" data-base="aud" data-low="65000" data-format="k"></span>, 3–4 year repayment, housing access is the main problem.</p>
+        <p style="margin-top:12px; opacity:0.7; font-size:0.8rem;">All scenarios are within the 5–10 year repayment window with 6% interest achievable.</p>
+    </div>
+
+    <!-- KEY RISKS -->
+    <h2>Key Risks</h2>
+    <div class="card card-warning">
+        <ul style="font-size:0.9rem; padding-left:18px;">
+            <li style="margin-bottom:8px;"><strong>Housing without employment</strong> — NL/IE landlords require proof of income. Budget for expensive short-term housing or upfront payments.</li>
+            <li style="margin-bottom:8px;"><strong>Job search duration</strong> — Estimated 1–3 months from Europe, potentially longer remotely from Argentina.</li>
+            <li style="margin-bottom:8px;"><strong>Husband's income gap</strong> — His remote work may not immediately transfer; budget conservatively for his contribution.</li>
+            <li><strong>Accenture transfer unlikely</strong> — Previously attempted without success. Plan independently.</li>
+        </ul>
+    </div>
+
+    <footer>
+        Prepared May 2026 · Estimates based on 2025–2026 cost data · Consult an immigration lawyer for specific legal advice
+    </footer>
+
+    <script>
+        // Conversion rates relative to AUD
+        const RATES = {
+            AUD: { rate: 1,     symbol: 'A$',  code: 'AUD' },
+            EUR: { rate: 0.59,  symbol: '€',   code: 'EUR' },
+            USD: { rate: 0.65,  symbol: 'US$', code: 'USD' },
+            ARS: { rate: 800,   symbol: 'AR$', code: 'ARS' }
+        };
+        // Cross-rate: to convert from EUR base to AUD first, multiply by (1 / 0.59) ≈ 1.6949
+        const EUR_TO_AUD = 1 / RATES.EUR.rate;
+
+        let currentCurrency = 'AUD';
+
+        function formatNumber(n, currency) {
+            // ARS values tend to be huge, use no decimals
+            if (currency === 'ARS') {
+                return n.toLocaleString('es-AR', { maximumFractionDigits: 0 });
+            }
+            return n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+        }
+
+        function formatK(n, currency) {
+            if (currency === 'ARS') {
+                // ARS in millions for large amounts
+                if (n >= 1000000) {
+                    const m = n / 1000000;
+                    return (m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)) + 'M';
+                }
+                return Math.round(n / 1000) + 'k';
+            }
+            return Math.round(n / 1000) + 'k';
+        }
+
+        function convert(audValue, targetCurrency) {
+            return audValue * RATES[targetCurrency].rate;
+        }
+
+        function renderMoney(el, currency) {
+            const base = el.dataset.base || 'aud';
+            let lowAud = parseFloat(el.dataset.low);
+            let highAud = el.dataset.high ? parseFloat(el.dataset.high) : null;
+            const fmt = el.dataset.format || 'full';
+            const suffix = el.dataset.suffix || '';
+
+            // If base is EUR, convert to AUD first
+            if (base === 'eur') {
+                lowAud = lowAud * EUR_TO_AUD;
+                if (highAud !== null) highAud = highAud * EUR_TO_AUD;
+            }
+
+            const lowConverted = convert(lowAud, currency);
+            const highConverted = highAud !== null ? convert(highAud, currency) : null;
+            const sym = RATES[currency].symbol;
+
+            let text;
+            if (fmt === 'k') {
+                if (highConverted !== null) {
+                    text = sym + formatK(lowConverted, currency) + '–' + formatK(highConverted, currency);
+                } else {
+                    text = sym + formatK(lowConverted, currency);
+                }
+            } else {
+                if (highConverted !== null) {
+                    text = sym + formatNumber(lowConverted, currency) + '–' + formatNumber(highConverted, currency);
+                } else {
+                    text = sym + formatNumber(lowConverted, currency);
+                }
+            }
+
+            el.textContent = text + suffix;
+        }
+
+        function updateAllMoney() {
+            document.querySelectorAll('.money').forEach(el => renderMoney(el, currentCurrency));
+
+            // Update column headers in tables
+            document.querySelectorAll('.col-amount').forEach(th => {
+                th.textContent = RATES[currentCurrency].code;
+            });
+
+            // Update section title
+            const finLabel = document.getElementById('fin-currency-label');
+            if (finLabel) finLabel.textContent = RATES[currentCurrency].code;
+
+            // Update rate note
+            const rateNote = document.getElementById('rate-note');
+            if (rateNote) {
+                const eurRate = (RATES[currentCurrency].rate / RATES.EUR.rate);
+                rateNote.textContent = 'Rate used: 1 EUR ≈ ' + eurRate.toFixed(2) + ' ' + RATES[currentCurrency].code;
+            }
+        }
+
+        function setCurrency(code) {
+            currentCurrency = code;
+            document.querySelectorAll('.currency-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.currency-btn').forEach(btn => {
+                if (btn.textContent.includes(code)) btn.classList.add('active');
+            });
+            updateAllMoney();
+        }
+
+        function showScenario(id) {
+            document.querySelectorAll('.scenario-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.scenario-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('scenario-' + id).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Initial render
+        updateAllMoney();
+    </script>
+</body>
+</html>

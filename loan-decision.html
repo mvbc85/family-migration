@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Decision Tool — How Much to Lend?</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1a1a2e;
+            background: #f0f2f5;
+            padding: 16px;
+            max-width: 840px;
+            margin: 0 auto;
+        }
+        h1 { font-size: 1.5rem; color: #16213e; margin-bottom: 4px; }
+        .subtitle { color: #666; font-size: 0.85rem; margin-bottom: 24px; }
+        h2 {
+            font-size: 1.2rem;
+            color: #0f3460;
+            margin: 28px 0 12px;
+            border-bottom: 2px solid #0f3460;
+            padding-bottom: 4px;
+        }
+
+        /* Slider */
+        .slider-section {
+            background: linear-gradient(135deg, #0f3460, #16213e);
+            border-radius: 14px;
+            padding: 24px 20px;
+            color: #fff;
+            margin-bottom: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .slider-section label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+        .amount-display {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 4px 0 12px;
+            letter-spacing: -1px;
+        }
+        .amount-display .currency { font-size: 1.2rem; opacity: 0.7; font-weight: 400; }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.2);
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #e94560;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(233,69,96,0.4);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #e94560;
+            cursor: pointer;
+            border: none;
+        }
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            opacity: 0.5;
+            margin-top: 4px;
+        }
+        .slider-meta {
+            display: flex;
+            gap: 16px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+        .slider-meta-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            flex: 1;
+            min-width: 120px;
+        }
+        .slider-meta-item .meta-label { opacity: 0.6; font-size: 0.7rem; }
+        .slider-meta-item .meta-value { font-weight: 700; font-size: 1rem; }
+
+        /* Outcome card */
+        .outcome {
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 4px solid #ddd;
+            transition: all 0.3s;
+        }
+        .outcome.unlocked { border-left-color: #2ecc71; }
+        .outcome.partial { border-left-color: #f39c12; }
+        .outcome.locked { border-left-color: #ddd; opacity: 0.45; }
+        .outcome-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .outcome-title {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        .outcome-badge {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge-unlocked { background: #d4edda; color: #155724; }
+        .badge-tight { background: #fff3cd; color: #856404; }
+        .badge-locked { background: #eee; color: #999; }
+        .outcome-details {
+            font-size: 0.85rem;
+            color: #555;
+        }
+        .outcome-details p { margin: 4px 0; }
+        .outcome-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .outcome-stat {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 8px 10px;
+        }
+        .outcome-stat .stat-label { font-size: 0.7rem; color: #888; text-transform: uppercase; }
+        .outcome-stat .stat-value { font-weight: 700; font-size: 0.95rem; color: #16213e; }
+        .outcome-stat .stat-note { font-size: 0.75rem; color: #888; }
+
+        .bar-container {
+            background: #eee;
+            border-radius: 4px;
+            height: 6px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+        .bar-green { background: #2ecc71; }
+        .bar-orange { background: #f39c12; }
+        .bar-red { background: #e74c3c; }
+
+        /* Summary table */
+        .summary-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        th, td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th { background: #f0f4ff; font-weight: 600; color: #0f3460; }
+        tr:last-child td { border-bottom: none; }
+        .row-active { background: #eafff0; }
+
+        /* Recommendation box */
+        .reco-box {
+            background: linear-gradient(135deg, #0f3460, #1a1a4e);
+            color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+        .reco-box h3 { margin-bottom: 10px; }
+        .reco-box p { font-size: 0.9rem; opacity: 0.9; margin-bottom: 6px; }
+        .reco-highlight { color: #ff6b81; font-weight: 700; font-size: 1.1rem; }
+
+        /* Risk section */
+        .risk-item {
+            display: flex;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.85rem;
+        }
+        .risk-item:last-child { border-bottom: none; }
+        .risk-icon { font-size: 1.2rem; flex-shrink: 0; }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-top: 40px;
+            padding: 16px 0;
+        }
+
+        /* Matrix table */
+        .matrix-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 20px;
+        }
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+            text-align: center;
+        }
+        .matrix-table th, .matrix-table td {
+            padding: 10px 8px;
+            border: 1px solid #e8e8e8;
+        }
+        .matrix-table th {
+            background: #f0f4ff;
+            font-weight: 600;
+            color: #0f3460;
+        }
+        .matrix-table .country-col {
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .matrix-cell {
+            border-radius: 6px;
+            padding: 6px 4px;
+            font-weight: 600;
+            font-size: 0.72rem;
+            transition: background 0.3s, color 0.3s;
+            min-width: 70px;
+        }
+        .cell-green {
+            background: #d4edda;
+            color: #155724;
+        }
+        .cell-yellow {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .cell-grey {
+            background: #f0f0f0;
+            color: #aaa;
+        }
+        .matrix-legend {
+            display: flex;
+            gap: 16px;
+            margin-top: 10px;
+            font-size: 0.75rem;
+            color: #666;
+            flex-wrap: wrap;
+        }
+        .matrix-legend span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        @media (max-width: 500px) {
+            .outcome-grid { grid-template-columns: 1fr; }
+            .slider-meta-item { min-width: 100px; }
+            .matrix-table { font-size: 0.7rem; }
+            .matrix-cell { min-width: 55px; padding: 5px 3px; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Loan Decision Tool</h1>
+    <p class="subtitle">What does each amount unlock for the family? — Private, for us only</p>
+
+    <!-- SLIDER -->
+    <div class="slider-section">
+        <label>Loan amount</label>
+        <div class="amount-display"><span class="currency">A$</span> <span id="slider-value">25,000</span></div>
+        <input type="range" id="loan-slider" min="5000" max="75000" step="5000" value="25000" oninput="update()">
+        <div class="slider-labels"><span>$5k</span><span>$20k</span><span>$35k</span><span>$50k</span><span>$65k</span><span>$75k</span></div>
+        <div class="slider-meta">
+            <div class="slider-meta-item">
+                <div class="meta-label">Repayment @ 6%</div>
+                <div class="meta-value" id="meta-repay">—</div>
+            </div>
+            <div class="slider-meta-item">
+                <div class="meta-label">Total you receive back</div>
+                <div class="meta-value" id="meta-total-back">—</div>
+            </div>
+            <div class="slider-meta-item">
+                <div class="meta-label">Options available</div>
+                <div class="meta-value" id="meta-options">—</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MATRIX TABLE -->
+    <h2>Overview: What's Possible?</h2>
+    <div class="matrix-card">
+        <table class="matrix-table">
+            <thead>
+                <tr>
+                    <th>Country</th>
+                    <th>With Job</th>
+                    <th>No Job</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="country-col">🇱🇹 Lithuania</td>
+                    <td><div class="matrix-cell" id="m-lt-job">—</div></td>
+                    <td><div class="matrix-cell" id="m-lt-nojob">—</div></td>
+                </tr>
+                <tr>
+                    <td class="country-col">🇪🇪 Estonia</td>
+                    <td><div class="matrix-cell" id="m-ee-job">—</div></td>
+                    <td><div class="matrix-cell" id="m-ee-nojob">—</div></td>
+                </tr>
+                <tr>
+                    <td class="country-col">🇩🇪 Germany</td>
+                    <td><div class="matrix-cell" id="m-de-job">—</div></td>
+                    <td><div class="matrix-cell" id="m-de-nojob">—</div></td>
+                </tr>
+                <tr>
+                    <td class="country-col">🇳🇱 Netherlands</td>
+                    <td><div class="matrix-cell" id="m-nl-job">—</div></td>
+                    <td><div class="matrix-cell" id="m-nl-nojob">—</div></td>
+                </tr>
+                <tr>
+                    <td class="country-col">🇮🇪 Ireland</td>
+                    <td><div class="matrix-cell" id="m-ie-job">—</div></td>
+                    <td><div class="matrix-cell" id="m-ie-nojob">—</div></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="matrix-legend">
+            <span><span class="legend-dot" style="background:#d4edda;"></span> Fully funded</span>
+            <span><span class="legend-dot" style="background:#fff3cd;"></span> Tight / possible</span>
+            <span><span class="legend-dot" style="background:#f0f0f0;"></span> Not enough</span>
+        </div>
+    </div>
+
+    <!-- SCENARIOS -->
+    <h2>What This Amount Unlocks</h2>
+    <div id="scenarios"></div>
+
+    <!-- QUICK REFERENCE TABLE -->
+    <h2>Quick Reference</h2>
+    <div class="summary-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Loan</th>
+                    <th>Best option</th>
+                    <th>Repay time</th>
+                    <th>You get back</th>
+                    <th>Risk</th>
+                </tr>
+            </thead>
+            <tbody id="ref-table"></tbody>
+        </table>
+    </div>
+
+    <!-- RECOMMENDATION -->
+    <div class="reco-box" id="recommendation"></div>
+
+    <!-- RISK FACTORS -->
+    <h2>Risk Factors to Consider</h2>
+    <div class="summary-card">
+        <div class="risk-item">
+            <span class="risk-icon">🛡️</span>
+            <div><strong>Sister has EU passport</strong> — She can legally live and work in any EU country immediately. This is the single biggest risk mitigator. She cannot be deported or denied work.</div>
+        </div>
+        <div class="risk-item">
+            <span class="risk-icon">💼</span>
+            <div><strong>7 years at Accenture + engineering degree</strong> — Strong employable profile in Europe. Cost control / finance roles are in demand.</div>
+        </div>
+        <div class="risk-item">
+            <span class="risk-icon">⚠️</span>
+            <div><strong>No savings of their own</strong> — They have no buffer if something goes wrong. The loan IS the buffer. If you lend the minimum, there's no margin for error.</div>
+        </div>
+        <div class="risk-item">
+            <span class="risk-icon">🏠</span>
+            <div><strong>Housing is the #1 obstacle</strong> — Especially in NL/IE, landlords require employment proof. Without a job, they need 3+ months of short-term housing (expensive).</div>
+        </div>
+        <div class="risk-item">
+            <span class="risk-icon">👨‍👩‍👧</span>
+            <div><strong>Family of 3 with a 5-year-old</strong> — They can't couch-surf or take extreme risks. Needs to be a stable move. This raises the minimum viable amount.</div>
+        </div>
+        <div class="risk-item">
+            <span class="risk-icon">💸</span>
+            <div><strong>Worst case scenario</strong> — If they can't find work within 4–6 months, they'd need to return to Argentina. You'd lose a significant portion of the loan (flights, rent paid, etc). Recoverable amount depends on how much was spent before they give up.</div>
+        </div>
+    </div>
+
+    <footer>Private document — May 2026 · Not for sharing</footer>
+
+    <script>
+        // All scenarios defined with their AUD cost ranges and characteristics
+        const SCENARIOS = [
+            {
+                id: 'ee-job',
+                title: '🇪🇪 Estonia — with job secured first',
+                costLow: 19000,
+                costHigh: 25000,
+                repayMonthly: 1000,
+                schools: '★★★★★ (#1 in Europe)',
+                salary: 'A$4,200–5,900/month gross',
+                pros: 'Lowest cost entry into Europe. Best schools on the continent. English-friendly.',
+                cons: 'Lower salary means slower repayment. Cold climate. Small job market.',
+                riskLevel: 'low',
+                repayYears: '2–2.5 yr',
+            },
+            {
+                id: 'lt-job',
+                title: '🇱🇹 Lithuania — with job secured first',
+                costLow: 17000,
+                costHigh: 23000,
+                repayMonthly: 800,
+                schools: '★★★★',
+                salary: 'A$3,400–5,100/month gross',
+                pros: 'Cheapest option. Decent schools. Good stepping stone.',
+                cons: 'Weakest job market. Lowest salary. Harder to find English-speaking roles.',
+                riskLevel: 'medium',
+                repayYears: '2.5–3 yr',
+            },
+            {
+                id: 'ee-nojob',
+                title: '🇪🇪 Estonia — move first, find job there',
+                costLow: 27000,
+                costHigh: 33000,
+                repayMonthly: 1000,
+                schools: '★★★★★ (#1 in Europe)',
+                salary: 'A$4,200–5,900/month gross',
+                pros: 'No need to job hunt remotely. Housing accessible without employment. Fastest to get settled.',
+                cons: '3-month job search period with no income. Need bigger buffer.',
+                riskLevel: 'medium',
+                repayYears: '3–3.5 yr',
+            },
+            {
+                id: 'nl-job',
+                title: '🇳🇱 Netherlands — with job secured first',
+                costLow: 33000,
+                costHigh: 45000,
+                repayMonthly: 2000,
+                schools: '★★★★★',
+                salary: 'A$7,800–9,900/month gross',
+                pros: 'Highest salary = fastest repayment. Excellent schools. English-friendly workplaces.',
+                cons: 'Husband needs A1 Dutch exam (or Belgium detour). Tight housing market.',
+                riskLevel: 'low',
+                repayYears: '1.5–2 yr',
+            },
+            {
+                id: 'de-job',
+                title: '🇩🇪 Germany — with job secured first',
+                costLow: 28000,
+                costHigh: 38000,
+                repayMonthly: 1500,
+                schools: '★★★★★',
+                salary: 'A$7,100–9,200/month gross',
+                pros: 'Strong economy. Excellent schools in southern states. Lower rent than NL.',
+                cons: 'German language needed medium-term. Less English in workplaces.',
+                riskLevel: 'low',
+                repayYears: '2–2.5 yr',
+            },
+            {
+                id: 'ie-job',
+                title: '🇮🇪 Ireland — with job secured first',
+                costLow: 35000,
+                costHigh: 45000,
+                repayMonthly: 1800,
+                schools: '★★★★',
+                salary: 'A$7,800–10,600/month gross',
+                pros: 'English-speaking. Accenture presence. High salaries.',
+                cons: 'Severe housing crisis. Very high rent eats into surplus.',
+                riskLevel: 'medium',
+                repayYears: '2–2.5 yr',
+            },
+            {
+                id: 'de-nojob',
+                title: '🇩🇪 Germany — move first, find job there',
+                costLow: 45000,
+                costHigh: 55000,
+                repayMonthly: 1500,
+                schools: '★★★★★',
+                salary: 'A$7,100–9,200/month gross',
+                pros: 'Strong job market once there. Lower cost than NL/IE.',
+                cons: 'Need German for most roles. Expensive search period.',
+                riskLevel: 'high',
+                repayYears: '3–4 yr',
+            },
+            {
+                id: 'ie-nojob',
+                title: '🇮🇪 Ireland — move first, find job there',
+                costLow: 55000,
+                costHigh: 65000,
+                repayMonthly: 1800,
+                schools: '★★★★',
+                salary: 'A$7,800–10,600/month gross',
+                pros: 'English-speaking. Can interview in person. Accenture presence.',
+                cons: 'Housing crisis makes this extremely difficult without income. Very high rent during search.',
+                riskLevel: 'high',
+                repayYears: '3.5–4 yr',
+            },
+            {
+                id: 'lt-nojob',
+                title: '🇱🇹 Lithuania — move first, find job there',
+                costLow: 22000,
+                costHigh: 28000,
+                repayMonthly: 800,
+                schools: '★★★★',
+                salary: 'A$3,400–5,100/month gross',
+                pros: 'Very cheap to live during job search. Housing easy to get.',
+                cons: 'Weak job market for English speakers. Low salary = slow repayment.',
+                riskLevel: 'medium',
+                repayYears: '3–4 yr',
+            },
+            {
+                id: 'nl-nojob',
+                title: '🇳🇱 Netherlands — move first, find job there',
+                costLow: 60000,
+                costHigh: 72000,
+                repayMonthly: 2000,
+                schools: '★★★★★',
+                salary: 'A$7,800–9,900/month gross',
+                pros: 'Highest earning potential once employed.',
+                cons: 'Very expensive search period. Housing nearly impossible without income proof. High risk.',
+                riskLevel: 'high',
+                repayYears: '3.5–4 yr',
+            },
+        ];
+
+        function fmt(n) {
+            return n.toLocaleString('en-AU', { maximumFractionDigits: 0 });
+        }
+
+        function getStatus(loan, scenario) {
+            const buffer = 2000; // small grace
+            if (loan >= scenario.costHigh) return 'unlocked';
+            if (loan >= scenario.costLow - buffer) return 'partial';
+            return 'locked';
+        }
+
+        function getStatusLabel(status) {
+            if (status === 'unlocked') return '<span class="outcome-badge badge-unlocked">Fully funded</span>';
+            if (status === 'partial') return '<span class="outcome-badge badge-tight">Tight / risky</span>';
+            return '<span class="outcome-badge badge-locked">Not enough</span>';
+        }
+
+        function calcRepay(principal, monthlyPayment, annualRate) {
+            // Simple amortization
+            const r = annualRate / 12;
+            if (r === 0) return { months: Math.ceil(principal / monthlyPayment), totalBack: principal };
+            let balance = principal;
+            let months = 0;
+            let totalPaid = 0;
+            while (balance > 0 && months < 600) {
+                const interest = balance * r;
+                const payment = Math.min(monthlyPayment, balance + interest);
+                balance = balance + interest - payment;
+                totalPaid += payment;
+                months++;
+            }
+            return { months, totalBack: Math.round(totalPaid) };
+        }
+
+        function coveragePercent(loan, scenario) {
+            const mid = (scenario.costLow + scenario.costHigh) / 2;
+            return Math.min(100, Math.round((loan / mid) * 100));
+        }
+
+        function barClass(pct) {
+            if (pct >= 90) return 'bar-green';
+            if (pct >= 60) return 'bar-orange';
+            return 'bar-red';
+        }
+
+        function renderScenarios(loan) {
+            const container = document.getElementById('scenarios');
+            let html = '';
+
+            const sorted = [...SCENARIOS].sort((a, b) => {
+                const sa = getStatus(loan, a) === 'unlocked' ? 0 : getStatus(loan, a) === 'partial' ? 1 : 2;
+                const sb = getStatus(loan, b) === 'unlocked' ? 0 : getStatus(loan, b) === 'partial' ? 1 : 2;
+                if (sa !== sb) return sa - sb;
+                return a.costLow - b.costLow;
+            });
+
+            for (const s of sorted) {
+                const status = getStatus(loan, s);
+                const pct = coveragePercent(loan, s);
+                const repay = calcRepay(loan, s.repayMonthly, 0.06);
+
+                html += `
+                <div class="outcome ${status}">
+                    <div class="outcome-header">
+                        <span class="outcome-title">${s.title}</span>
+                        ${getStatusLabel(status)}
+                    </div>
+                    <div class="outcome-details">
+                        <p><strong>Needed:</strong> A$${fmt(s.costLow)}–${fmt(s.costHigh)}</p>
+                        <div class="bar-container"><div class="bar-fill ${barClass(pct)}" style="width:${pct}%"></div></div>
+                        <p style="font-size:0.75rem;color:#888;margin-top:2px;">${pct}% of midpoint covered by this loan</p>
+                    </div>
+                    ${status !== 'locked' ? `
+                    <div class="outcome-grid">
+                        <div class="outcome-stat">
+                            <div class="stat-label">Schools</div>
+                            <div class="stat-value" style="color:#f39c12;">${s.schools}</div>
+                        </div>
+                        <div class="outcome-stat">
+                            <div class="stat-label">Expected salary</div>
+                            <div class="stat-value">${s.salary}</div>
+                        </div>
+                        <div class="outcome-stat">
+                            <div class="stat-label">Repay time @ 6%</div>
+                            <div class="stat-value">${repay.months} months</div>
+                            <div class="stat-note">(~${(repay.months/12).toFixed(1)} years)</div>
+                        </div>
+                        <div class="outcome-stat">
+                            <div class="stat-label">Total you get back</div>
+                            <div class="stat-value">A$${fmt(repay.totalBack)}</div>
+                            <div class="stat-note">Profit: A$${fmt(repay.totalBack - loan)}</div>
+                        </div>
+                    </div>
+                    <div class="outcome-details" style="margin-top:10px;">
+                        <p style="color:#2ecc71;">✓ ${s.pros}</p>
+                        <p style="color:#e74c3c;">✗ ${s.cons}</p>
+                    </div>
+                    ` : `
+                    <div class="outcome-details" style="margin-top:6px;">
+                        <p>Need A$${fmt(s.costLow - loan)} more to reach minimum for this option.</p>
+                    </div>
+                    `}
+                </div>`;
+            }
+            container.innerHTML = html;
+        }
+
+        function renderRefTable(currentLoan) {
+            const tbody = document.getElementById('ref-table');
+            let html = '';
+            for (let amount = 5000; amount <= 75000; amount += 5000) {
+                // Find best unlocked scenario at this amount
+                const unlocked = SCENARIOS.filter(s => getStatus(amount, s) !== 'locked')
+                    .sort((a, b) => {
+                        // Prefer unlocked over partial
+                        const sa = getStatus(amount, a) === 'unlocked' ? 0 : 1;
+                        const sb = getStatus(amount, b) === 'unlocked' ? 0 : 1;
+                        if (sa !== sb) return sa - sb;
+                        // Then prefer lower risk
+                        const riskOrder = { low: 0, medium: 1, high: 2 };
+                        return riskOrder[a.riskLevel] - riskOrder[b.riskLevel];
+                    });
+
+                const best = unlocked[0];
+                const active = amount === currentLoan ? ' class="row-active"' : '';
+
+                if (best) {
+                    const repay = calcRepay(amount, best.repayMonthly, 0.06);
+                    const status = getStatus(amount, best);
+                    const riskLabels = { low: '🟢 Low', medium: '🟡 Med', high: '🔴 High' };
+                    const statusNote = status === 'partial' ? ' (tight)' : '';
+                    html += `<tr${active}>
+                        <td><strong>A$${fmt(amount)}</strong></td>
+                        <td>${best.title.split('—')[0].trim()}${statusNote}</td>
+                        <td>${(repay.months / 12).toFixed(1)} yr</td>
+                        <td>A$${fmt(repay.totalBack)}</td>
+                        <td>${riskLabels[best.riskLevel]}</td>
+                    </tr>`;
+                } else {
+                    html += `<tr${active}>
+                        <td><strong>A$${fmt(amount)}</strong></td>
+                        <td colspan="4" style="color:#999;">Not enough for any safe option</td>
+                    </tr>`;
+                }
+            }
+            tbody.innerHTML = html;
+        }
+
+        function renderRecommendation(loan) {
+            const box = document.getElementById('recommendation');
+            const unlocked = SCENARIOS.filter(s => getStatus(loan, s) === 'unlocked');
+            const partial = SCENARIOS.filter(s => getStatus(loan, s) === 'partial');
+
+            let html = '<h3>Our Recommendation at A$' + fmt(loan) + '</h3>';
+
+            if (unlocked.length === 0 && partial.length === 0) {
+                html += `<p>At this amount, there isn't a viable relocation option. The minimum for a safe move is around <span class="reco-highlight">A$20,000</span> (Estonia with a job secured first).</p>`;
+            } else if (loan <= 15000) {
+                html += `<p>This is below the safe minimum. They <em>might</em> make Lithuania work at the very tightest, but there's almost no margin for error. A family with a 5-year-old shouldn't be this tight.</p>
+                <p>Consider: <span class="reco-highlight">A$20,000–25,000</span> to properly unlock Estonia (best schools in Europe, manageable cost).</p>`;
+            } else if (loan <= 25000) {
+                html += `<p>This unlocks <span class="reco-highlight">Estonia with a job secured first</span> — the best value option. #1 schools in Europe, English-friendly, and the loan is repaid in ~2 years.</p>
+                <p>The catch: she needs to find the job <em>before</em> moving. If she can't find one remotely, they're stuck waiting.</p>
+                <p>To also cover "move first, find job there", you'd need <span class="reco-highlight">A$30,000–35,000</span>.</p>`;
+            } else if (loan <= 35000) {
+                html += `<p>This is the <span class="reco-highlight">sweet spot for value</span>. It unlocks:</p>
+                <p>• Estonia even without a job (move now, search there)<br>• Germany with a job secured first<br>• Starting to reach Netherlands/Ireland with a job</p>
+                <p>Multiple paths = lower risk. If one country doesn't work out, they have alternatives.</p>`;
+            } else if (loan <= 45000) {
+                html += `<p>This gives them <span class="reco-highlight">maximum flexibility</span>. All "with job" scenarios are fully funded, including Netherlands (highest salary, fastest repayment).</p>
+                <p>At A$${fmt(loan)}, the Netherlands with a job returns <strong>A$${fmt(calcRepay(loan, 2000, 0.06).totalBack)}</strong> — a profit of <strong>A$${fmt(calcRepay(loan, 2000, 0.06).totalBack - loan)}</strong> for us over ~${(calcRepay(loan, 2000, 0.06).months / 12).toFixed(1)} years.</p>
+                <p>This is more than most savings accounts would earn on the same capital.</p>`;
+            } else if (loan <= 60000) {
+                html += `<p>At this level, even "move without a job" to Germany/Ireland becomes viable. The extra buffer means they can take 3+ months to find work without stress.</p>
+                <p>The question isn't whether they can do it — it's whether the extra buffer is worth the additional capital at risk.</p>
+                <p>Our recommendation: lend <span class="reco-highlight">A$35,000–40,000</span> and have her secure a job first. The extra capital doesn't meaningfully improve outcomes but does increase our exposure.</p>`;
+            } else {
+                html += `<p>At <span class="reco-highlight">A$${fmt(loan)}</span>, even the Netherlands without a job becomes viable — the most expensive scenario.</p>
+                <p>This is more capital at risk than necessary. The same outcome (Netherlands) can be achieved with A$35–45k if she secures a job first.</p>
+                <p>Only consider this amount if: (a) they want to move immediately with no waiting, AND (b) we're comfortable with the chance we might not see ~$20–30k back if things go badly in the first 3 months.</p>
+                <p>Better approach: lend <span class="reco-highlight">A$35,000–45,000</span>, she gets a job first, same result with half the risk.</p>`;
+            }
+
+            box.innerHTML = html;
+        }
+
+        function update() {
+            const loan = parseInt(document.getElementById('loan-slider').value);
+            document.getElementById('slider-value').textContent = fmt(loan);
+
+            // Meta stats
+            const bestUnlocked = SCENARIOS
+                .filter(s => getStatus(loan, s) === 'unlocked')
+                .sort((a, b) => b.repayMonthly - a.repayMonthly)[0];
+
+            const optionsCount = SCENARIOS.filter(s => getStatus(loan, s) !== 'locked').length;
+            document.getElementById('meta-options').textContent = optionsCount + ' of ' + SCENARIOS.length;
+
+            if (bestUnlocked) {
+                const repay = calcRepay(loan, bestUnlocked.repayMonthly, 0.06);
+                document.getElementById('meta-repay').textContent = (repay.months / 12).toFixed(1) + ' years (best)';
+                document.getElementById('meta-total-back').textContent = 'A$' + fmt(repay.totalBack);
+            } else {
+                const bestPartial = SCENARIOS
+                    .filter(s => getStatus(loan, s) === 'partial')
+                    .sort((a, b) => b.repayMonthly - a.repayMonthly)[0];
+                if (bestPartial) {
+                    const repay = calcRepay(loan, bestPartial.repayMonthly, 0.06);
+                    document.getElementById('meta-repay').textContent = (repay.months / 12).toFixed(1) + ' yr (tight)';
+                    document.getElementById('meta-total-back').textContent = 'A$' + fmt(repay.totalBack);
+                } else {
+                    document.getElementById('meta-repay').textContent = '—';
+                    document.getElementById('meta-total-back').textContent = '—';
+                }
+            }
+
+            renderMatrix(loan);
+            renderScenarios(loan);
+            renderRefTable(loan);
+            renderRecommendation(loan);
+        }
+
+        // Matrix rendering
+        const MATRIX_MAP = {
+            'm-lt-job': 'lt-job',
+            'm-lt-nojob': 'lt-nojob',
+            'm-ee-job': 'ee-job',
+            'm-ee-nojob': 'ee-nojob',
+            'm-de-job': 'de-job',
+            'm-de-nojob': 'de-nojob',
+            'm-nl-job': 'nl-job',
+            'm-nl-nojob': 'nl-nojob',
+            'm-ie-job': 'ie-job',
+            'm-ie-nojob': 'ie-nojob',
+        };
+
+        function renderMatrix(loan) {
+            for (const [cellId, scenarioId] of Object.entries(MATRIX_MAP)) {
+                const cell = document.getElementById(cellId);
+                const scenario = SCENARIOS.find(s => s.id === scenarioId);
+                if (!scenario) { cell.className = 'matrix-cell cell-grey'; cell.textContent = 'N/A'; continue; }
+
+                const status = getStatus(loan, scenario);
+                if (status === 'unlocked') {
+                    cell.className = 'matrix-cell cell-green';
+                    cell.textContent = 'A$' + Math.round(scenario.costLow/1000) + '–' + Math.round(scenario.costHigh/1000) + 'k ✓';
+                } else if (status === 'partial') {
+                    cell.className = 'matrix-cell cell-yellow';
+                    cell.textContent = 'A$' + Math.round(scenario.costLow/1000) + '–' + Math.round(scenario.costHigh/1000) + 'k ~';
+                } else {
+                    cell.className = 'matrix-cell cell-grey';
+                    cell.textContent = 'A$' + Math.round(scenario.costLow/1000) + '–' + Math.round(scenario.costHigh/1000) + 'k';
+                }
+            }
+        }
+
+        // Initial render
+        update();
+    </script>
+</body>
+</html>

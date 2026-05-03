@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estonia Stepping Stone Plan</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+            color: #1a1a2e;
+            background: #f8f9fa;
+            padding: 16px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 { font-size: 1.6rem; color: #16213e; margin-bottom: 4px; }
+        h2 {
+            font-size: 1.25rem;
+            color: #0f3460;
+            margin: 36px 0 14px;
+            border-bottom: 2px solid #e94560;
+            padding-bottom: 6px;
+        }
+        h3 {
+            font-size: 1.05rem;
+            color: #16213e;
+            margin: 20px 0 8px;
+        }
+        .subtitle { color: #666; font-size: 0.85rem; margin-bottom: 28px; }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .card-blue { border-left: 4px solid #3498db; }
+        .card-green { border-left: 4px solid #2ecc71; }
+        .card-orange { border-left: 4px solid #f39c12; }
+        .card-red { border-left: 4px solid #e74c3c; }
+        .card-dark {
+            background: linear-gradient(135deg, #0f3460, #16213e);
+            color: #fff;
+            border-left: none;
+        }
+        .card-dark h3 { color: #fff; }
+        .card-dark .highlight { color: #ff6b81; font-weight: 700; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin: 12px 0;
+        }
+        th, td {
+            padding: 9px 10px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th { background: #f0f4ff; font-weight: 600; color: #0f3460; }
+        tr:last-child td { border-bottom: none; }
+        .total-row { font-weight: 700; background: #f0fff0; }
+
+        .timeline {
+            position: relative;
+            padding-left: 28px;
+            margin: 16px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #3498db, #2ecc71, #e94560);
+            border-radius: 2px;
+        }
+        .tl-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .tl-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 4px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid #3498db;
+        }
+        .tl-item.phase2::before { border-color: #2ecc71; }
+        .tl-item.phase3::before { border-color: #e94560; }
+        .tl-label {
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #0f3460;
+        }
+        .tl-item p {
+            font-size: 0.9rem;
+            color: #444;
+            margin-top: 2px;
+        }
+
+        .rating {
+            display: inline-flex;
+            gap: 2px;
+        }
+        .star-on { color: #f39c12; }
+        .star-off { color: #ddd; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 12px 0;
+        }
+        .stat-box {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .stat-box .label { font-size: 0.72rem; text-transform: uppercase; color: #888; }
+        .stat-box .value { font-size: 1.1rem; font-weight: 700; color: #16213e; }
+        .stat-box .note { font-size: 0.78rem; color: #666; }
+
+        .compare-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .compare-col {
+            flex: 1;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 14px;
+        }
+        .compare-col h4 {
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            color: #0f3460;
+        }
+        .compare-col.preferred {
+            background: #eafff0;
+            border: 2px solid #2ecc71;
+        }
+
+        .weather-bar {
+            display: flex;
+            border-radius: 6px;
+            overflow: hidden;
+            height: 20px;
+            margin: 8px 0;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        .wb-winter { background: #a8d8ea; color: #1a5276; flex: 3; display: flex; align-items: center; justify-content: center; }
+        .wb-spring { background: #c9e4ca; color: #1e5631; flex: 2.5; display: flex; align-items: center; justify-content: center; }
+        .wb-summer { background: #ffd93d; color: #6b4226; flex: 3; display: flex; align-items: center; justify-content: center; }
+        .wb-autumn { background: #e8a87c; color: #6b3a2a; flex: 2.5; display: flex; align-items: center; justify-content: center; }
+
+        .pro-con { font-size: 0.88rem; margin: 5px 0; }
+        .pro::before { content: "✓ "; color: #2ecc71; font-weight: bold; }
+        .con::before { content: "✗ "; color: #e74c3c; font-weight: bold; }
+
+        .callout {
+            background: #eaf4ff;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-size: 0.88rem;
+            margin: 12px 0;
+        }
+        .callout strong { color: #0f3460; }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-top: 40px;
+            padding: 16px;
+        }
+
+        @media (max-width: 500px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .compare-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <h1>🇪🇪 The Estonia Stepping Stone Plan</h1>
+    <p class="subtitle">Move now, build European credentials, then upgrade to NL/DE when ready</p>
+
+    <!-- THE IDEA -->
+    <div class="card card-dark">
+        <h3>The Core Idea</h3>
+        <p style="margin:8px 0;">Instead of waiting months for a Dutch/German job from Argentina (uncertain) or spending $60–70k to move without one (risky), use Estonia as a <span class="highlight">low-cost launchpad</span>.</p>
+        <p style="margin:8px 0;">Move immediately for <span class="highlight">A$22–25k</span>. Stabilize. Build European experience. Then jump to a higher-paying country from a position of strength.</p>
+        <div class="grid-2" style="margin-top:14px;">
+            <div class="stat-box" style="background:rgba(255,255,255,0.1);">
+                <div class="label" style="color:rgba(255,255,255,0.6);">Loan needed</div>
+                <div class="value" style="color:#fff;">A$25,000</div>
+            </div>
+            <div class="stat-box" style="background:rgba(255,255,255,0.1);">
+                <div class="label" style="color:rgba(255,255,255,0.6);">You get back</div>
+                <div class="value" style="color:#fff;">~A$27,200</div>
+                <div class="note" style="color:rgba(255,255,255,0.5);">at 6% over ~2.5 years</div>
+            </div>
+            <div class="stat-box" style="background:rgba(255,255,255,0.1);">
+                <div class="label" style="color:rgba(255,255,255,0.6);">Capital at risk</div>
+                <div class="value" style="color:#fff;">A$25k</div>
+                <div class="note" style="color:rgba(255,255,255,0.5);">vs $40–70k for direct NL</div>
+            </div>
+            <div class="stat-box" style="background:rgba(255,255,255,0.1);">
+                <div class="label" style="color:rgba(255,255,255,0.6);">They can move in</div>
+                <div class="value" style="color:#fff;">Weeks</div>
+                <div class="note" style="color:rgba(255,255,255,0.5);">No job needed first</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <h2>The Plan: Phase by Phase</h2>
+
+    <div class="timeline">
+        <div class="tl-item">
+            <div class="tl-label">Month 0–1 · Launch</div>
+            <p>Arrive in Tallinn. Register as EU citizen (sister) + apply for husband's family member card. Find apartment. Enrol daughter in school (Estonian public or international). Open bank account (digital, takes 10 minutes).</p>
+        </div>
+        <div class="tl-item">
+            <div class="tl-label">Month 1–4 · Stabilize</div>
+            <p>Sister job hunts in Tallinn (cost control, finance, shared service centre roles). Husband continues his remote admin work. Daughter settles into school. Living off the loan buffer.</p>
+        </div>
+        <div class="tl-item phase2">
+            <div class="tl-label">Month 4–18 · Build</div>
+            <p>Sister working. Loan repayment begins (~A$1,000/month). Building European CV, professional references, LinkedIn network. Learning how EU workplaces operate. Maybe picking up some Dutch on the side.</p>
+        </div>
+        <div class="tl-item phase2">
+            <div class="tl-label">Month 12–18 · Hunt</div>
+            <p>Start applying for NL/DE/IE jobs. Now her CV says "Senior Cost Controller, [Company], Tallinn" — not "Accenture Argentina". She can fly to Amsterdam for interviews (€60 return, 2.5hr flight). Recruiters take her seriously.</p>
+        </div>
+        <div class="tl-item phase3">
+            <div class="tl-label">Month 18–24 · Upgrade</div>
+            <p>Accepts offer in Netherlands/Germany. Moves (cheap intra-EU). Employer may offer relocation package. Dutch salary = loan repayment accelerates to ~A$2,000/month.</p>
+        </div>
+        <div class="tl-item phase3">
+            <div class="tl-label">Month 24–30 · Done</div>
+            <p>Loan fully repaid. Family settled in target country with European experience, established careers, and daughter bilingual in English.</p>
+        </div>
+    </div>
+
+    <!-- FINANCES -->
+    <h2>Financial Details</h2>
+
+    <div class="card">
+        <h3>Initial Costs (What the loan covers)</h3>
+        <table>
+            <tr><th>Item</th><th>AUD</th></tr>
+            <tr><td>Flights: Buenos Aires → Tallinn (3 people)</td><td>$4,000–4,500</td></tr>
+            <tr><td>Apartment deposit + first month (2-bed, Tallinn)</td><td>$3,000–4,000</td></tr>
+            <tr><td>Basic furniture & household setup</td><td>$2,500–3,500</td></tr>
+            <tr><td>Living costs while job hunting (2–3 months)</td><td>$6,000–8,000</td></tr>
+            <tr><td>Registration fees, health insurance gap</td><td>$1,000</td></tr>
+            <tr><td>Emergency buffer</td><td>$2,500</td></tr>
+            <tr class="total-row"><td>Total</td><td>$19,000–23,500</td></tr>
+        </table>
+        <div class="callout">
+            <strong>Recommended loan:</strong> A$25,000 — covers the high estimate plus a comfortable margin. Better to have $2k unused than be $2k short with a 5-year-old depending on you.
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Monthly Budget Once Working (Estonia)</h3>
+        <table>
+            <tr><th>Item</th><th>Monthly AUD</th></tr>
+            <tr><td>Sister's net salary</td><td>+$3,500–4,500</td></tr>
+            <tr><td>Husband's remote income</td><td>+$1,000–1,500</td></tr>
+            <tr style="font-weight:600;background:#f0f4ff"><td>Total household income</td><td>$4,500–6,000</td></tr>
+            <tr><td>Rent (2-bedroom, Tallinn)</td><td>-$1,400–1,800</td></tr>
+            <tr><td>Groceries & household</td><td>-$800–1,000</td></tr>
+            <tr><td>Transport (free public transit!)</td><td>-$0</td></tr>
+            <tr><td>Utilities, phone, internet</td><td>-$300–400</td></tr>
+            <tr><td>Childcare/after-school (if needed)</td><td>-$200–400</td></tr>
+            <tr><td>Misc, entertainment, clothing</td><td>-$400–600</td></tr>
+            <tr class="total-row"><td>Available for loan repayment</td><td>$800–1,200</td></tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h3>Repayment Schedule</h3>
+        <table>
+            <tr><th>Period</th><th>Payment</th><th>Balance</th></tr>
+            <tr><td>Month 1–4 (settling, no income)</td><td>$0</td><td>~$25,500 (interest accrues)</td></tr>
+            <tr><td>Month 5–18 (Estonia salary)</td><td>$1,000/mo</td><td>~$12,000</td></tr>
+            <tr><td>Month 19–20 (transition to NL)</td><td>$0</td><td>~$12,200</td></tr>
+            <tr><td>Month 21–28 (NL salary)</td><td>$2,000/mo</td><td>$0 ✓</td></tr>
+            <tr class="total-row"><td colspan="2">Total time to repay</td><td>~28 months (2.3 years)</td></tr>
+            <tr class="total-row"><td colspan="2">Total you receive back</td><td>A$27,200 (profit: $2,200)</td></tr>
+        </table>
+        <div class="callout">
+            <strong>If they stay in Estonia</strong> (don't move to NL): repayment continues at $1,000/month → fully repaid in ~30 months. You still get your money back. The "stepping stone" is optional upside, not a requirement.
+        </div>
+    </div>
+
+    <!-- WHY ESTONIA WORKS AS ENTRY POINT -->
+    <h2>Why Estonia Works as an Entry Point</h2>
+
+    <div class="card card-green">
+        <p class="pro">Housing is accessible WITHOUT a job — landlords don't require employment contracts like in NL/IE</p>
+        <p class="pro">EU citizen registration takes 1 day (sister + daughter). Husband's family card: ~2 weeks</p>
+        <p class="pro">Everything is digital — bank account, ID, tax registration, doctor, all online</p>
+        <p class="pro">English works for daily life AND employment in Tallinn</p>
+        <p class="pro">Very low setup costs compared to Western Europe</p>
+        <p class="pro">Free public transport for Tallinn residents — one less expense</p>
+        <p class="pro">Daughter enters #1 school system in Europe immediately</p>
+        <p class="pro">1.5–3 hour flights to Amsterdam, Berlin, Dublin for interviews</p>
+    </div>
+
+    <!-- LIFE IN ESTONIA -->
+    <h2>Life in Estonia: What to Expect</h2>
+
+    <!-- Tallinn -->
+    <div class="card">
+        <h3>🏙️ Tallinn: The City</h3>
+        <p style="font-size:0.9rem;color:#555;margin-bottom:10px;">Population ~450,000. The only realistic destination for her job profile. Compact, modern, safe, beautiful medieval old town alongside a sleek business district.</p>
+        <div class="grid-2">
+            <div class="stat-box">
+                <div class="label">Rent (2-bed apartment)</div>
+                <div class="value">€700–1,100/mo</div>
+                <div class="note">Depending on area & quality</div>
+            </div>
+            <div class="stat-box">
+                <div class="label">Cross the city</div>
+                <div class="value">20 minutes</div>
+                <div class="note">By car or tram</div>
+            </div>
+            <div class="stat-box">
+                <div class="label">Public transport</div>
+                <div class="value">FREE</div>
+                <div class="note">For registered residents</div>
+            </div>
+            <div class="stat-box">
+                <div class="label">Internet speed</div>
+                <div class="value">Top 10 globally</div>
+                <div class="note">Fibre everywhere</div>
+            </div>
+        </div>
+        <div class="callout">
+            <strong>Car needed?</strong> No. Tallinn is compact, flat, well-served by free public transit. Schools reachable by bus/tram. Bolt (local Uber) is very cheap for occasional trips. A car would only matter for weekend countryside trips — optional.
+        </div>
+    </div>
+
+    <!-- Safety -->
+    <div class="card card-green">
+        <h3>🛡️ Safety</h3>
+        <p style="font-size:0.9rem;margin-bottom:8px;">For a family coming from Argentina, this will be the most noticeable change.</p>
+        <p class="pro">Extremely low violent crime — one of the safest countries in Europe</p>
+        <p class="pro">No "dangerous" neighbourhoods in the Latin American sense</p>
+        <p class="pro">A 5-year-old can walk to school safely in most areas</p>
+        <p class="pro">Very low corruption (Nordic-level governance)</p>
+        <p class="pro">Stable EU + NATO member — no geopolitical anxiety</p>
+        <p class="pro">They won't need to think about personal security at all</p>
+    </div>
+
+    <!-- Schools -->
+    <div class="card card-blue">
+        <h3>🎓 Schools</h3>
+        <p style="font-size:0.9rem;margin-bottom:10px;">Estonia ranks <strong>#1 in Europe</strong> on PISA (above Finland, Netherlands, Germany). The system emphasizes critical thinking, digital literacy, and languages from a young age.</p>
+        <div class="grid-2">
+            <div class="stat-box">
+                <div class="label">Public school cost</div>
+                <div class="value">Free</div>
+            </div>
+            <div class="stat-box">
+                <div class="label">International schools</div>
+                <div class="value">€3,000–8,000/yr</div>
+                <div class="note">English-language option</div>
+            </div>
+        </div>
+        <div class="callout">
+            <strong>For the daughter (age 5):</strong> She can enter an Estonian public school (instruction in Estonian — children pick it up fast at that age) or an international school (English instruction). At 5, she'll absorb the language within months. By the time they potentially move to NL, she'll speak English + Estonian fluently, plus Spanish at home.
+        </div>
+    </div>
+
+    <!-- Weather -->
+    <div class="card card-orange">
+        <h3>🌦️ Weather — The Honest Truth</h3>
+        <p style="font-size:0.9rem;color:#856404;margin-bottom:10px;"><strong>This is the main downside. Coming from Argentina, this will be a shock.</strong></p>
+
+        <div class="weather-bar">
+            <div class="wb-winter">Winter</div>
+            <div class="wb-spring">Spring</div>
+            <div class="wb-summer">Summer</div>
+            <div class="wb-autumn">Autumn</div>
+        </div>
+
+        <table>
+            <tr><th>Season</th><th>Temperature</th><th>Daylight</th><th>Character</th></tr>
+            <tr><td><strong>Winter</strong> (Dec–Feb)</td><td>-5°C to -15°C<br><span style="font-size:0.75rem;color:#888;">Can hit -25°C</span></td><td>~6 hours</td><td>Dark, snowy, genuinely cold</td></tr>
+            <tr><td><strong>Spring</strong> (Mar–May)</td><td>0°C to 15°C</td><td>Rapidly growing</td><td>Muddy early, beautiful late</td></tr>
+            <tr><td><strong>Summer</strong> (Jun–Aug)</td><td>18°C to 25°C</td><td>~19 hours ("white nights")</td><td>Lovely. Long warm days</td></tr>
+            <tr><td><strong>Autumn</strong> (Sep–Nov)</td><td>5°C to 15°C</td><td>Shortening fast</td><td>Rainy, grey, moody</td></tr>
+        </table>
+
+        <div class="callout">
+            <strong>Key concern:</strong> Winter darkness (sunset at 3:30pm in December) can affect mental health. Seasonal depression is real and common among immigrants from sunny countries.<br><br>
+            <strong>Mitigations:</strong> Vitamin D supplements, light therapy lamps (~€30), well-heated apartments, warm clothing. Estonians are masters of making winter cozy indoors. The daughter will barely notice — kids adapt fast.<br><br>
+            <strong>Reframe:</strong> If this is just 18–24 months before moving to Netherlands, they only experience 1–2 Estonian winters. Manageable.
+        </div>
+    </div>
+
+    <!-- Culture & Integration -->
+    <div class="card">
+        <h3>🤝 Culture & Social Life</h3>
+        <table>
+            <tr><th>Aspect</th><th>Reality</th></tr>
+            <tr><td>Estonian personality</td><td>Reserved, introverted, private. Warm once you know them but slow to open up. Very different from Latin warmth.</td></tr>
+            <tr><td>Expat community</td><td>Large and active in Tallinn — Facebook groups, meetups, co-working spaces. Easy to find other international families.</td></tr>
+            <tr><td>Latin American community</td><td>Very small. She'd be unusual (not in a bad way — people are curious, not hostile).</td></tr>
+            <tr><td>Racism/discrimination</td><td>Not a significant issue for Latin Americans. Country is homogeneous but not hostile.</td></tr>
+            <tr><td>English in daily life</td><td>Works perfectly in shops, restaurants, government offices. Younger Estonians speak excellent English.</td></tr>
+            <tr><td>Making friends</td><td>Expat friends: easy. Deep local friendships: slow. This is common in all Nordic/Baltic countries.</td></tr>
+        </table>
+        <div class="callout">
+            <strong>For 18–24 months:</strong> The expat community is more than enough. They don't need to "integrate" deeply into Estonian society — they need to live comfortably and build professional credentials. Tallinn's international community makes this easy.
+        </div>
+    </div>
+
+    <!-- Job Market -->
+    <div class="card card-blue">
+        <h3>💼 Job Market for Her Profile</h3>
+        <p style="font-size:0.9rem;margin-bottom:10px;">Tallinn has a strong shared-services / finance sector. Companies with offices there:</p>
+        <div class="grid-2">
+            <div class="stat-box">
+                <div class="label">Finance / Shared Services</div>
+                <div class="value" style="font-size:0.85rem;">Wise, Swedbank, LHV, Bolt, Playtech, Nortal</div>
+            </div>
+            <div class="stat-box">
+                <div class="label">Consulting</div>
+                <div class="value" style="font-size:0.85rem;">EY, PwC, KPMG, Deloitte (smaller offices)</div>
+            </div>
+            <div class="stat-box">
+                <div class="label">Her target roles</div>
+                <div class="value" style="font-size:0.85rem;">Cost Controller, Finance Analyst, FP&A, Business Controller</div>
+            </div>
+            <div class="stat-box">
+                <div class="label">Expected salary</div>
+                <div class="value">€2,500–3,500/mo</div>
+                <div class="note">Gross. Net ~€2,000–2,800</div>
+            </div>
+        </div>
+        <div class="callout">
+            <strong>Job search time estimate:</strong> 1–3 months. Her profile (Industrial Engineer + 7yr Accenture cost control) is solid. The EU passport means no sponsorship hassle for employers. English-speaking roles exist but the market is smaller than NL/DE — start applying before arrival.
+        </div>
+    </div>
+
+    <!-- COMPARISON -->
+    <h2>Stepping Stone vs Direct: Side by Side</h2>
+
+    <div class="compare-row">
+        <div class="compare-col preferred">
+            <h4>🇪🇪 Estonia First → then NL/DE</h4>
+            <table>
+                <tr><td>Initial loan</td><td><strong>A$25,000</strong></td></tr>
+                <tr><td>Move when?</td><td>Immediately</td></tr>
+                <tr><td>Daughter in school</td><td>Within 2 weeks</td></tr>
+                <tr><td>Capital at risk</td><td>$25,000</td></tr>
+                <tr><td>Total repayment time</td><td>~2.5 years</td></tr>
+                <tr><td>You get back</td><td>~A$27,200</td></tr>
+                <tr><td>Worst case</td><td>They stay in Estonia (still fine)</td></tr>
+                <tr><td>NL job chances</td><td>Higher (EU experience + in-person interviews)</td></tr>
+            </table>
+        </div>
+        <div class="compare-col">
+            <h4>🇳🇱 Direct to Netherlands</h4>
+            <table>
+                <tr><td>Initial loan</td><td><strong>A$35,000–45,000</strong></td></tr>
+                <tr><td>Move when?</td><td>After job secured (1–6 months wait)</td></tr>
+                <tr><td>Daughter in school</td><td>After job + move (months)</td></tr>
+                <tr><td>Capital at risk</td><td>$35,000–45,000</td></tr>
+                <tr><td>Total repayment time</td><td>~1.5–2 years</td></tr>
+                <tr><td>You get back</td><td>~A$39,000–50,000</td></tr>
+                <tr><td>Worst case</td><td>Can't find job = stuck / $45k gone</td></tr>
+                <tr><td>NL job chances</td><td>Lower (applying from Argentina)</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="callout">
+        <strong>The key difference:</strong> With the Estonia route, the <em>worst case</em> is still a good life (safe country, best schools, loan repaid). With the direct NL route, the worst case is months of waiting with nothing happening, or a very expensive failure.
+    </div>
+
+    <!-- THE ASK -->
+    <h2>The Decision: What We'd Be Agreeing To</h2>
+
+    <div class="card card-dark">
+        <h3>Summary for Us</h3>
+        <div class="grid-2" style="margin-top:12px;">
+            <div class="stat-box" style="background:rgba(255,255,255,0.1);">
+                <div class="label" style="color:rgba(255,255,255,0.6);">We lend</div>
+                <div class="value" style="color:#fff;">A$25,000</div>
+            </div>
+            <div class="stat-box" style="background:rgba(255,255,255,0.1);">
+                <div class="label" style="color:rgba(255,255,255,0.6);">We get back</div>
+                <div class="value" style="color:#fff;">~A$27,200</div>
+                <div class="note" style="color:rgba(255,255,255,0.5);">If 6% interest. Or $25k if we waive it.</div>
+            </div>
+            <div class="stat-box" style="background:rgba(255,255,255,0.1);">
+                <div class="label" style="color:rgba(255,255,255,0.6);">Repaid by</div>
+                <div class="value" style="color:#fff;">~2.5 years</div>
+                <div class="note" style="color:rgba(255,255,255,0.5);">Whether they stay in EE or move to NL</div>
+            </div>
+            <div class="stat-box" style="background:rgba(255,255,255,0.1);">
+                <div class="label" style="color:rgba(255,255,255,0.6);">Worst realistic case</div>
+                <div class="value" style="color:#ff6b81;">Lose ~$10–15k</div>
+                <div class="note" style="color:rgba(255,255,255,0.5);">If they fail completely and return to Argentina within 3 months (unlikely given EU passport + her qualifications)</div>
+            </div>
+        </div>
+        <p style="margin-top:16px;font-size:0.9rem;">The question isn't "will this work?" — she has an EU passport and 7 years at Accenture. The question is "are we okay with $25k being unavailable for 2.5 years, with a small chance we lose some of it?"</p>
+    </div>
+
+    <!-- WHAT COULD GO WRONG -->
+    <h2>What Could Go Wrong</h2>
+
+    <div class="card card-red">
+        <table>
+            <tr><th>Risk</th><th>Likelihood</th><th>Impact</th><th>Mitigation</th></tr>
+            <tr>
+                <td>Can't find job in Estonia within 4 months</td>
+                <td>Low (EU passport + strong CV)</td>
+                <td>Burns through buffer faster</td>
+                <td>She can take any English-speaking role initially, even below her level. Remote roles also possible.</td>
+            </tr>
+            <tr>
+                <td>Marriage stress from relocation</td>
+                <td>Medium</td>
+                <td>Personal, but could affect ability to repay</td>
+                <td>Not something we can control. Husband having remote work helps his self-worth.</td>
+            </tr>
+            <tr>
+                <td>Complete failure — return to Argentina</td>
+                <td>Very low</td>
+                <td>Lose $15–20k (what they spent before returning)</td>
+                <td>EU passport makes this nearly impossible to fail at the "legal right to stay" level.</td>
+            </tr>
+            <tr>
+                <td>They repay slower than planned</td>
+                <td>Medium</td>
+                <td>3.5–4 years instead of 2.5</td>
+                <td>Still within our 5–10 year comfort window.</td>
+            </tr>
+            <tr>
+                <td>Never move to NL (stay in Estonia)</td>
+                <td>Medium</td>
+                <td>No impact on us — loan still repaid. They just earn less long-term.</td>
+                <td>Not our concern. Our money comes back either way.</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- NEXT STEPS -->
+    <h2>If We Decide Yes — Next Steps</h2>
+
+    <div class="card">
+        <div class="timeline">
+            <div class="tl-item">
+                <div class="tl-label">Step 1 · Agree terms</div>
+                <p>Put it in writing (even informal): amount, interest (6% or 0%), monthly repayment start date, what happens if they're late.</p>
+            </div>
+            <div class="tl-item">
+                <div class="tl-label">Step 2 · She starts job hunting</div>
+                <p>She can begin applying to Tallinn roles from Argentina NOW (LinkedIn, CV.ee, MeetFrank). May even secure something before arriving.</p>
+            </div>
+            <div class="tl-item">
+                <div class="tl-label">Step 3 · Book flights</div>
+                <p>Buenos Aires → Tallinn. Often cheapest via Istanbul (Turkish Airlines) or Helsinki (Finnair). ~$1,200–1,500/person.</p>
+            </div>
+            <div class="tl-item">
+                <div class="tl-label">Step 4 · Transfer funds</div>
+                <p>Send in tranches if more comfortable: $15k before departure, $10k after arrival + registration confirmed. Use Wise for best rates.</p>
+            </div>
+            <div class="tl-item phase2">
+                <div class="tl-label">Step 5 · They arrive</div>
+                <p>Register at police station (EU citizen registration, same day). Find apartment (Facebook groups, KV.ee, City24.ee). Enrol daughter.</p>
+            </div>
+            <div class="tl-item phase2">
+                <div class="tl-label">Step 6 · Repayments begin</div>
+                <p>First payment ~month 5 (after first full salary received). Monthly transfer to our account via Wise.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Private document — May 2026 · For our decision only
+    </footer>
+</body>
+</html>
